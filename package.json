@@ -1,0 +1,13 @@
+{
+  "name": "mern-finance",
+  "version": "1.0.0",
+  "description": "A mern stack finance app",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "mongodb": "^7.1.0"
+  }
+}
