@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node index.js"
   },
+  "author": "Ian Phillips",
+  "license": "ISC",
   "dependencies": {
     "express": "^5.2.1",
     "mongodb": "^7.1.0"
