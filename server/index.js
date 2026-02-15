@@ -1,15 +1,39 @@
 const { MongoClient } = require('mongodb');
+const cors = require('cors');
 const express = require('express');
 
 const app = express();
+app.use(express.json());
+app.use(cors());
+
 const port = 8081;
 
-app.get('/', (req, res) => {
-  res.send('Hello World from express!');
+// Define a route for GET requests
+app.get('/transaction', (req, res) => {
+    res.json({ message: 'Returning list of transactions' });
+});
+
+// Define a route for POST requests
+app.post('/transaction', (req, res) => {
+    const newtransaction = req.body;
+    res.json({ message: 'transaction created', transaction: newtransaction });
+});
+
+// Define a route for PUT requests
+app.put('/transaction/:id', (req, res) => {
+    const transactionId = req.params.id;
+    const updatedtransaction = req.body;
+    res.json({ message: `transaction with ID ${transactionId} updated`, updatedtransaction });
+});
+
+// Define a route for DELETE requests
+app.delete('/transaction/:id', (req, res) => {
+    const transactionId = req.params.id;
+    res.json({ message: `transaction with ID ${transactionId} deleted` });
 });
 
 app.listen(port, () => {
-  console.log(`Example express app listening at http://localhost:${port}`);
+  console.log(`Express server listening at http://localhost:${port}`);
 });
 
 // const uri = "mongodb://root:example@mongo:27017/"

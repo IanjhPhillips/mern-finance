@@ -6,7 +6,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
 
-  app:
+  server:
     build:
       context: ./server
     ports:
@@ -14,4 +14,15 @@ services:
     environment:
       NODE_ENV: development
     command: npm run start
+
+  client:
+    build:
+      context: ./client
+    ports:
+      - 3000:3000
+    environment:
+      NODE_ENV: development
+    command: npm run start
+
+
 
