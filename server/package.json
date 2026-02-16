@@ -2,9 +2,9 @@
   "name": "mern-server",
   "version": "1.0.0",
   "description": "proxy server for mern finance web app",
-  "main": "index.js",
+  "main": "./src/index.mjs",
   "scripts": {
-    "start": "node index.js"
+    "start": "node ./src/index.mjs"
   },
   "author": "Ian Phillips",
   "license": "Apache-2.0",

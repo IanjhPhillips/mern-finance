@@ -1,11 +1,9 @@
 import axios from 'axios';
 
-let result = "No result"
-
 //data will be the string we send from our server
 const get = () => {
   console.log("fetching from express")
-  axios.get('http://localhost:8081/transaction').then((data) => {
+  axios.get('http://localhost:8081/api/transaction').then((data) => {
     //this console.log will be in our frontend console
     console.log(data)
   })
@@ -13,7 +11,7 @@ const get = () => {
 
 const post = () => {
   console.log("fetching from express")
-  axios.post('http://localhost:8081/transaction', {
+  axios.post('http://localhost:8081/api/transaction', {
     date: Date(),
     description: "Test transaction POST",
     amount: 420
@@ -26,7 +24,8 @@ const post = () => {
 
 const put = () => {
   console.log("fetching from express")
-  axios.put('http://localhost:8081/transaction/1', {
+  return;
+  axios.put('http://localhost:8081/api/transaction/1', {
     date: Date(),
     description: "New desc",
     amount: 69
@@ -39,7 +38,8 @@ const put = () => {
 
 const del = () => {
   console.log("fetching from express")
-  axios.delete('http://localhost:8081/transaction/2').then((data) => {
+  return;
+  axios.delete('http://localhost:8081/api/transaction/2').then((data) => {
     //this console.log will be in our frontend console
     console.log(data)
   })

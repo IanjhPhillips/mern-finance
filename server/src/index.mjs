@@ -1,0 +1,101 @@
+import express from "express";
+import cors from "cors";
+import api from "./routes/api.mjs";
+
+const PORT = 8081;
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+// Load the /posts routes
+app.use("/api", api);
+
+// Global error handling
+app.use((err, _req, res, next) => {
+  res.status(500).send("Uh oh! An unexpected error occured.")
+})
+
+// start the Express server
+app.listen(PORT, () => {
+  console.log(`Server is running on port: ${PORT}`);
+});
+// // Define a route for GET requests
+// app.get('/api/transaction', (req, res) => {
+//     res.json({ message: 'Returning list of transactions' });
+// });
+
+// // Define a route for POST requests
+// app.post('/api/transaction', (req, res) => {
+//     const newtransaction = req.body;
+//     res.json({ message: 'transaction created', transaction: newtransaction });
+// });
+
+// Define a route for PUT requests
+// app.put('/api/transaction/:id', (req, res) => {
+//     const transactionId = req.params.id;
+//     const updatedtransaction = req.body;
+//     res.json({ message: `transaction with ID ${transactionId} updated`, updatedtransaction });
+// });
+
+// // Define a route for DELETE requests
+// app.delete('/api/transaction/:id', (req, res) => {
+//     const transactionId = req.params.id;
+//     res.json({ message: `transaction with ID ${transactionId} deleted` });
+// });
+
+// app.listen(port, () => {
+//   console.log(`Express server listening at http://localhost:${port}`);
+// });
+
+// const uri = "mongodb://root:example@mongo:27017/"
+// const client = new MongoClient(uri);
+
+// async function run() {
+//   try {
+//     await client.connect();
+//     const db = client.db("blog");
+//     const collection = db.collection('posts');
+
+//     await collection.insertMany([
+//   {
+//     title: "Post Title 2",
+//     body: "Body of post.",
+//     category: "Event",
+//     likes: 2,
+//     tags: ["news", "events"],
+//     date: Date()
+//   },
+//   {
+//     title: "Post Title 3",
+//     body: "Body of post.",
+//     category: "Technology",
+//     likes: 3,
+//     tags: ["news", "events"],
+//     date: Date()
+//   },
+//   {
+//     title: "Post Title 4",
+//     body: "Body of post.",
+//     category: "Event",
+//     likes: 4,
+//     tags: ["news", "events"],
+//     date: Date()
+//   }
+// ]);
+
+//     // Find the first document in the collection
+//     const likedPost = await collection.findOne({likes: {$gt: 2}});
+    
+//     console.log(likedPost);
+
+//     const firstPost = await collection.findOne();
+//     console.log(firstPost);
+
+//   } finally {
+//     // Close the database connection when finished or an error occurs
+//     await client.close();
+//   }
+// }
+// run().catch(console.error);
+
