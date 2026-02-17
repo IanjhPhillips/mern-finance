@@ -12,16 +12,16 @@ const collection = db.collection('transactions');
 //     res.json({ message: 'Data from API router with CORS enabled', body: transactions });
 // });
 
-router.get('/transaction', (req, res) => {
+router.get('/', (req, res) => {
       //const transactions=collection.find();
       //transactions=[{id:1,name:'Income',amount:500},{id:2,name:'Coffee', amount:5}, {id:3, name:'E-transfer', amount: 17.5}];
       res.json(transactions);
 });
 
-router.post('/transaction', (req, res) => {
+router.post('/', (req, res) => {
       //collection.insertOne({date: req.body.date, description: req.body.description, amount: req.body.amount})
       transactions.push(...[{id:1,name:'Income',amount:500},{id:2,name:'Coffee', amount:5}, {id:3, name:'E-transfer', amount: 17.5}])
-      res.redirect('/api/transaction');
+      res.redirect('/transaction');
 });
 
 //router.get('/transaction', transactionController.get);
