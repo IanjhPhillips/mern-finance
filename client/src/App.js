@@ -1,10 +1,57 @@
 import axios from 'axios';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 
 
-function App() {
+function Transactions() {
 
   const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    console.log("get")
+    axios.get('http://localhost:8081/transaction')
+    .then((response) => {
+      setTransactions(response.data);
+      setLoading(false);
+      console.log(response);
+    })
+    .catch((error) => {
+      setError(error);
+      setLoading(false);
+      console.log(`AXIOS Error: ${error.response.data}`)
+    })
+  }, []);
+
+  if (loading) {
+    return <p>Loading data...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error.response.data}</p>;
+  }
+
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Date</th>
+          <th>Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        {transactions.map(item => (
+          <tr key={item._id}>
+            <td>{item.description}</td>
+            <td>{item.date}</td>
+            <td>{item.amount}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
 
   //data will be the string we send from our server
   const get = () => {
@@ -90,20 +137,38 @@ function App() {
       console.log(`Fetch Error: ${error.response.data}`)
     })
   }
+
+  return <div className="App">
+    <header className="App-header">
+      <button onClick={get}>GET</button>
+      <button onClick={post}>POST</button>
+      <button onClick={patch}>PUT</button>
+      <button onClick={del}>DELETE</button>
+    </header>
+  </div>;
+}
+
+function Import() {
+  return <h1>Import</h1>;
+}
+
+function App() {
   
   return (
-    <div className="App">
-      <header className="App-header">
+    <BrowserRouter>
+      <nav>
+        <Link to="/">Transactions</Link> |{" "}
+        <Link to="/import">Import</Link>
+      </nav>
 
-        <button onClick={get}>GET</button>
-        <button onClick={post}>POST</button>
-        <button onClick={patch}>PUT</button>
-        <button onClick={del}>DELETE</button>
-
-      </header>
-    </div>
+      <Routes>
+        <Route path="/" element={<Transactions/>}/>
+        <Route path="/import" element={<Import/>}/>
+      </Routes>
+    </BrowserRouter>
   );
 }
+
   
 
 export default App;
