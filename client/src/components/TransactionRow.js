@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useState } from 'react';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
-import BasicSelect from './BasicSelect';
+import DBTransactionCategorySelect from './DBTransactionCategorySelect';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -24,14 +24,14 @@ export default function TransactionRow({item, setTransactions}) {
             console.log(err.response.data)
         });
 
-    }
+    }    
 
     return (
         <TableRow
             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
         >
             <TableCell component="th" scope="row">
-                <BasicSelect transaction={transaction}></BasicSelect>
+                <DBTransactionCategorySelect transaction={transaction}></DBTransactionCategorySelect>
             </TableCell>
             <TableCell align="right">{transaction.description}</TableCell>
             <TableCell align="right">{transaction.date}</TableCell>

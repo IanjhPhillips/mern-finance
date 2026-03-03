@@ -8,6 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TransactionRow from '../components/TransactionRow';
+import TransactionForm from '../components/TransactionForm';
 
 function Transactions() {
 
@@ -38,30 +39,10 @@ function Transactions() {
     return <p>Error: {error.response.data}</p>;
   }
 
-  const post = () => {
-    console.log("post")
-    axios.post('http://localhost:8081/transaction', {
-      description: "Mock transaction",
-      amount: Math.random()*100,
-    })
-    .then((response) => {
-      console.log(response);
-      if (response.status === 200) {
-        console.log("response:");
-        console.log(response.data);
-        setTransactions([...transactions, response.data]);
-      }
-    })
-    .catch((error) => {
-      console.log(`AXIOS Error: ${error.response.data}`)
-    });
-  }
-
   return (
   <div>
-    <div>
-      <button onClick={post}>Create mock transaction</button>
-    </div>
+    <TransactionForm transactions={transactions} setTransactions={setTransactions}></TransactionForm>
+
     <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
