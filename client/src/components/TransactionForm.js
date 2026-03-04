@@ -9,8 +9,12 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
+import range from '../utils/Range';
+import { date, years, months, getMonthLength} from '../utils/DateUtils';
 
 function TransactionForm({ transactions, setTransactions }) {
+
+    
 
     const emptyTransaction = {
         "category": "",
@@ -18,17 +22,53 @@ function TransactionForm({ transactions, setTransactions }) {
         "amount": 0.0
     }
 
+
     const [category, setCategory] = useState(emptyTransaction.category);
     const [description, setDescription] = useState(emptyTransaction.description);
     const [amount, setAmount] = useState(emptyTransaction.amount);
+    const [year, setYear] = useState(date.getFullYear());
+    const [month, setMonth] = useState(months[date.getMonth()]);
+    const [day, setDay] = useState(date.getDay());
+    const [days, setDays] = useState(range(1, getMonthLength(month, year)));
+
+    function validateMonth (m, y) {
+        let monthLength = getMonthLength(m, y);
+
+        if (day > monthLength) {
+            setDay(1);
+        }
+
+        setDays(range(1, monthLength));
+    }
+
+    const handleMonth = (e) => {
+        console.log(`Month: ${e.target.value}`);
+        let newMonth = e.target.value;
+        setMonth(newMonth);
+        validateMonth(newMonth, year);
+    }
+
+    const handleYear = (e) => {
+        console.log(`Year: ${e.target.value}`);
+        setYear(e.target.value);
+        validateMonth(month, e.target.value);
+    }
+
+    const handleDay = (e) => {
+        console.log(`Day: ${e.target.value}`);
+        setDay(e.target.value);
+    }
 
     const handleSubmit = async () => {
 
+        let date = new Date(year, months.indexOf(month), day, 0, 0, 0, 0);
+        console.log(date);
         // post
         axios.post('http://localhost:8081/transaction', {
             category: category,
             description: description,
             amount: amount,
+            date: date
         })
             .then((response) => {
                 console.log(response);
@@ -51,9 +91,9 @@ function TransactionForm({ transactions, setTransactions }) {
 
     return (
         <form>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', margin: 2 }}>
                 <div>
-                    <FormControl sx={{ m: 1, width: '25ch' }}>
+                    <FormControl sx={{ m: 1, width: '30ch' }}>
                         <InputLabel id={"category-label"}>Category</InputLabel>
                         <Select
                             labelId="category-label"
@@ -70,37 +110,85 @@ function TransactionForm({ transactions, setTransactions }) {
                             <MenuItem value={"Entertainment"}>Entertainment</MenuItem>
                             <MenuItem value={"Other"}>Other</MenuItem>
                         </Select>
-                </FormControl>
-                <TextField
-                    sx={{ m: 1, width: '25ch' }}
-                    id="description-field"
-                    label="Description"
-                    value={description}
-                    onChange={(event) => {
-                        setDescription(event.target.value);
-                    }}
-                />
-                <FormControl sx={{ m: 1, width: '25ch' }}>
-                    <InputLabel htmlFor="amount-field">Amount</InputLabel>
-                    <OutlinedInput
-                        id="amount-field"
-                        startAdornment={<InputAdornment position="start">$</InputAdornment>}
-                        label="Amount"
-                        value={amount}
+                    </FormControl>
+                    <TextField
+                        sx={{ m: 1, width: '30ch' }}
+                        id="description-field"
+                        label="Description"
+                        value={description}
                         onChange={(event) => {
-                            setAmount(event.target.value);
+                            setDescription(event.target.value);
                         }}
                     />
-                </FormControl>
-                <Button
-                    sx={{ m: 1, width: '25ch', height: '7ch' }}
-                    variant="contained"
-                    onClick={handleSubmit}
-                >
-                    Submit
-                </Button>
-            </div>
-        </Box>
+                    <FormControl sx={{ m: 1, width: '30ch' }}>
+                        <InputLabel htmlFor="amount-field">Amount</InputLabel>
+                        <OutlinedInput
+                            id="amount-field"
+                            startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                            label="Amount"
+                            value={amount}
+                            onChange={(event) => {
+                                setAmount(event.target.value);
+                            }}
+                        />
+                    </FormControl>
+                    <FormControl sx={{ m: 1, width: '25ch' }}>
+                        <InputLabel id={"year-label"}>Year</InputLabel>
+                        <Select
+                            labelId="year-label"
+                            id="year"
+                            value={year}
+                            label="Year"
+                            onChange={handleYear}
+                        >
+                            {years.map((y) => (
+                                <MenuItem
+                                    key={y}
+                                    value={y}>{y}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    <FormControl sx={{ m: 1, width: '25ch' }}>
+                        <InputLabel id={"month-label"}>Month</InputLabel>
+                        <Select
+                            labelId="month-label"
+                            id="month"
+                            value={month}
+                            label="Month"
+                            onChange={handleMonth}
+                        >
+                            {months.map((y) => (
+                                <MenuItem
+                                    key={y}
+                                    value={y}>{y}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    <FormControl sx={{ m: 1, width: '25ch' }}>
+                        <InputLabel id={"day-label"}>Day</InputLabel>
+                        <Select
+                            labelId="day-label"
+                            id="day"
+                            value={day}
+                            label="Day"
+                            onChange={handleDay}
+                        >
+                            {days.map((y) => (
+                                <MenuItem
+                                    key={y}
+                                    value={y}>{y}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    <Button
+                        sx={{ m: 1, width: '25ch', height: '7ch' }}
+                        variant="contained"
+                        onClick={handleSubmit}
+                    >
+                        Submit
+                    </Button>
+                </div>
+            </Box>
         </form >
     );
 }

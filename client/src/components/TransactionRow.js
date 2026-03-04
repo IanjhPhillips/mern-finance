@@ -8,10 +8,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function TransactionRow({item, setTransactions}) {
 
-    const [transaction, setTransaction] = useState(item);
+    const dateString = new Date(item.date).toDateString();
 
     const handleDelete = async () => {
-        let id = transaction._id;
+        let id = item._id;
         let route = `http://localhost:8081/transaction/${id}`;
         await axios.delete(route)
         .then((res) => {
@@ -31,15 +31,15 @@ export default function TransactionRow({item, setTransactions}) {
             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
         >
             <TableCell component="th" scope="row">
-                <DBTransactionCategorySelect transaction={transaction}></DBTransactionCategorySelect>
+                <DBTransactionCategorySelect transaction={item}></DBTransactionCategorySelect>
             </TableCell>
-            <TableCell align="right">{transaction.description}</TableCell>
-            <TableCell align="right">{transaction.date}</TableCell>
-            <TableCell align="right">{transaction.amount}</TableCell>
+            <TableCell align="right">{item.description}</TableCell>
+            <TableCell align="right">{dateString}</TableCell>
+            <TableCell align="right">{item.amount}</TableCell>
             <TableCell align="right">
                 <IconButton
                   color="error"
-                  onClick={() => handleDelete(transaction._id)} // Pass the row's unique ID to the handler
+                  onClick={() => handleDelete(item._id)} // Pass the row's unique ID to the handler
                   aria-label="delete"
                 >
                   <DeleteIcon />

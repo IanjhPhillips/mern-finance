@@ -9,10 +9,14 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TransactionRow from '../components/TransactionRow';
 import TransactionForm from '../components/TransactionForm';
+// import Box from '@mui/material/Box';
+// import { date, years, months } from '../utils/DateUtils';
 
 function Transactions() {
 
   const [transactions, setTransactions] = useState([]);
+  // const [yearFilter, setYearFilter] = useState(date.getFullYear());
+  // const [monthFilter, setMonthFilter] = useState(date.getMonth());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -44,6 +48,11 @@ function Transactions() {
     <TransactionForm transactions={transactions} setTransactions={setTransactions}></TransactionForm>
 
     <TableContainer component={Paper}>
+        {/* <Box sx={{ display: 'flex', flexWrap: 'wrap', margin: 2 }}>
+          <div>
+            
+          </div>
+        </Box> */}
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
                 <TableRow>

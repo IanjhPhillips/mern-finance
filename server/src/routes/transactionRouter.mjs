@@ -18,36 +18,36 @@ router.put("/:id", async (req, res) => {
       console.log("patching")
       try {
             const collection = db.collection("transactions");
-    const updatedItem = await collection.findOneAndUpdate(
-      { _id: new ObjectId(req.params.id) }, // Filter
-      { $set: req.body },      // Update data
-      { returnDocument: "after"} // Options: return modified doc
-    );
-    
-    if (!updatedItem) {
-      console.log(`Item ${req.params.id} not found`);
-      return res.status(404).send('Item not found');
-      }
-      
-      console.log(updatedItem);
+            const updatedItem = await collection.findOneAndUpdate(
+                  { _id: new ObjectId(req.params.id) }, // Filter
+                  { $set: req.body },      // Update data
+                  { returnDocument: "after" } // Options: return modified doc
+            );
 
-    res.json(updatedItem).status(200); // Returns the updated document
-  } catch (err) {
-    res.status(500).send(err.message);
-  }
+            if (!updatedItem) {
+                  console.log(`Item ${req.params.id} not found`);
+                  return res.status(404).send('Item not found');
+            }
+
+            console.log(updatedItem);
+
+            res.json(updatedItem).status(200); // Returns the updated document
+      } catch (err) {
+            res.status(500).send(err.message);
+      }
 });
 
 // Delete an entry
 router.delete("/:id", async (req, res) => {
 
       try {
-            
+
             const query = { _id: new ObjectId(req.params.id) };
             console.log(`deleting ${query._id}`)
-            
+
             const collection = db.collection("transactions");
             await collection.deleteOne(query);
-            
+
             res.send(`deleted ${query._id}`).status(200);//.redirect("/transaction");
       }
       catch (error) {
@@ -59,10 +59,10 @@ router.delete("/:id", async (req, res) => {
 router.get("/:id", async (req, res) => {
       try {
             let collection = await db.collection("transactions");
-            let result = await collection.findOne({_id: new ObjectId(req.params.id) });
+            let result = await collection.findOne({ _id: new ObjectId(req.params.id) });
             res.send(result).status(200);
       }
-      catch(error) {
+      catch (error) {
             console.log(error);
             res.status(500);
       }
@@ -74,12 +74,12 @@ router.get("/", async (req, res) => {
 
             let collection = await db.collection("transactions");
             let results = await collection.find({})
-            //.limit(50)
-            .toArray();
-            
+                  //.limit(50)
+                  .toArray();
+
             res.send(results).status(200);
       }
-      catch(error) {
+      catch (error) {
             console.log(error);
             res.status(500);
       }
@@ -91,12 +91,16 @@ router.post("/", async (req, res) => {
       try {
             let collection = await db.collection("transactions");
             let newTransaction = req.body;
-            newTransaction.date = new Date();
+
+            if (!Object.hasOwn(newTransaction, "date")) {
+                  newTransaction.date = new Date();
+            }
+
             let insertResult = await collection.insertOne(newTransaction);
             let result = { _id: insertResult.insertedId, ...newTransaction };
             res.json(result).status(200);
       }
-      catch(error) {
+      catch (error) {
             console.log(error);
             res.status(500);
       }
