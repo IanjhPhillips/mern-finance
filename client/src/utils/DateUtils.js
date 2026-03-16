@@ -8,8 +8,6 @@ export const months = ["January", "February", "March", "April", "May", "June", "
 
 export function getMonthLength(m, y) {
     let monthLength = 31;
-    console.log(`getMonthLength args: ${m}, ${y}`);
-
     let monthIndex = months.indexOf(m);
 
     switch (monthIndex) {
@@ -33,7 +31,6 @@ export function getMonthLength(m, y) {
             monthLength = 30;
             break;
     }
-    console.log(`getMonthLength returning: ${monthLength}`);
     return monthLength
 }
 

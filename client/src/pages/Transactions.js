@@ -9,31 +9,68 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TransactionRow from '../components/TransactionRow';
 import TransactionForm from '../components/TransactionForm';
-// import Box from '@mui/material/Box';
-// import { date, years, months } from '../utils/DateUtils';
+import { date, months, years, getMonthLength } from '../utils/DateUtils';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
 
 function Transactions() {
 
+  console.log("rendering transactions");
+  
   const [transactions, setTransactions] = useState([]);
-  // const [yearFilter, setYearFilter] = useState(date.getFullYear());
-  // const [monthFilter, setMonthFilter] = useState(date.getMonth());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [year, setYear] = useState(date.getFullYear());
+  const [month, setMonth] = useState(months[date.getMonth()]);
+  
+  console.log(`======${year} ${month}==========`)
+
+  const handleMonth = (e) => {
+    let newMonth = e.target.value;
+    console.log(`month filter set to ${newMonth}`);
+    setMonth(newMonth);
+  }
+
+  const handleYear = (e) => {
+    let newYear = e.target.value;
+    console.log(`yearFilter set to ${newYear}`);
+    setYear(newYear);
+  }
+
+  const getTransactions = () => {
+    console.log("get")
+
+    let monthIndex = months.indexOf(month);
+    let monthLength = getMonthLength(month, year);
+    console.log(`monthLength for ${month} ${year}: ${monthLength}`);
+    let startDate = new Date(year, monthIndex, 1, 0,0,0,0);
+    let endDate = new Date(year, monthIndex, monthLength, 23, 59, 59, 999);
+
+    axios.get('http://localhost:8081/transaction',
+      {
+        params: {
+          start: startDate,
+          end: endDate
+        }
+      })
+      .then((response) => {
+        setTransactions(response.data);
+        setLoading(false);
+        console.log(response);
+      })
+      .catch((error) => {
+        setError(error);
+        setLoading(false);
+        console.log(`AXIOS Error: ${error.response.data}`)
+      })
+  }
 
   useEffect(() => {
-    console.log("get")
-    axios.get('http://localhost:8081/transaction')
-    .then((response) => {
-      setTransactions(response.data);
-      setLoading(false);
-      console.log(response);
-    })
-    .catch((error) => {
-      setError(error);
-      setLoading(false);
-      console.log(`AXIOS Error: ${error.response.data}`)
-    })
-  }, []);
+    console.log("use effect");
+    getTransactions();
+  }, [year, month]);
 
   if (loading) {
     return <p>Loading data...</p>;
@@ -44,51 +81,85 @@ function Transactions() {
   }
 
   return (
-  <div>
-    <TransactionForm transactions={transactions} setTransactions={setTransactions}></TransactionForm>
-
-    <TableContainer component={Paper}>
+    <div>
+      <TransactionForm setYearFilter={setYear} setMonthFilter={setMonth} transactions={transactions} setTransactions={setTransactions}></TransactionForm>
+      
+      <TableContainer component={Paper}>
         {/* <Box sx={{ display: 'flex', flexWrap: 'wrap', margin: 2 }}>
           <div>
             
           </div>
         </Box> */}
+        <div>
+        <FormControl sx={{ m: 1, width: '25ch' }}>
+          <InputLabel id={"year-label"}>Year Filter</InputLabel>
+          <Select
+            labelId="year-label"
+            id="year"
+            value={year}
+            label="Year Filter"
+            onChange={handleYear}
+          >
+            {years.map((y) => (
+              <MenuItem
+                key={y}
+                value={y}>{y}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl sx={{ m: 1, width: '25ch' }}>
+          <InputLabel id={"month-label"}>Month Filter</InputLabel>
+          <Select
+            labelId="month-label"
+            id="month"
+            value={month}
+            label="Month Filter"
+            onChange={handleMonth}
+          >
+            {months.map((y) => (
+              <MenuItem
+                key={y}
+                value={y}>{y}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </div>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead>
-                <TableRow>
-                    <TableCell>Category</TableCell>
-                    <TableCell align="right">Description</TableCell>
-                    <TableCell align="right">Date</TableCell>
-                    <TableCell align="right">Amount</TableCell>
-                    <TableCell align="right"></TableCell>
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                {transactions.map((item) => (
-                  <TransactionRow 
-                  key={item._id} 
-                  item={item} 
-                  setTransactions={setTransactions}></TransactionRow>
-                ))}
-            </TableBody>
+          <TableHead>
+            <TableRow>
+              <TableCell>Category</TableCell>
+              <TableCell align="right">Description</TableCell>
+              <TableCell align="right">Date</TableCell>
+              <TableCell align="right">Amount</TableCell>
+              <TableCell align="right"></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {transactions.map((item) => (
+              <TransactionRow
+                key={item._id}
+                item={item}
+                setTransactions={setTransactions}></TransactionRow>
+            ))}
+          </TableBody>
         </Table>
-    </TableContainer>
-  </div>
+      </TableContainer>
+    </div>
   );
 
   //data will be the string we send from our server
   const get = () => {
     console.log("get")
     axios.get('http://localhost:8081/transaction')
-    .then((response) => {
-      setTransactions(response.data);
-      console.log(response)
-    })
-    .catch((error) => {
-      console.log(`AXIOS Error: ${error.response.data}`)
-    })
+      .then((response) => {
+        setTransactions(response.data);
+        console.log(response)
+      })
+      .catch((error) => {
+        console.log(`AXIOS Error: ${error.response.data}`)
+      })
   }
-  
+
 
 
   const patch = async () => {
@@ -115,14 +186,14 @@ function Transactions() {
         amount: 69
       })
     })
-    .then(function (response) {
-      console.log(response);
-    })
-    .catch((error) => {
-      console.log(`AXIOS Error: ${error.response.data}`)
-    });
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(`AXIOS Error: ${error.response.data}`)
+      });
   }
-  
+
   const del = async () => {
 
     console.log("del")
@@ -141,15 +212,15 @@ function Transactions() {
     await fetch(route, {
       method: "DELETE"
     })
-    .then((response) => {
-      console.log(response)
-    })
-    .catch((error) => {
-      console.log(`Fetch Error: ${error.response.data}`)
-    })
+      .then((response) => {
+        console.log(response)
+      })
+      .catch((error) => {
+        console.log(`Fetch Error: ${error.response.data}`)
+      })
   }
 
-  return 
+  return
 }
 
 export default Transactions;

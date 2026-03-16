@@ -68,14 +68,31 @@ router.get("/:id", async (req, res) => {
       }
 });
 
-// Get a list of 50 transactions
+// Get a list of transactions
 router.get("/", async (req, res) => {
       try {
+            let start = req.query.start;
+            let end = req.query.end;
+
+
+            console.log(`filter start date ${start}`);
+            console.log(`filter end date ${end}`);
 
             let collection = await db.collection("transactions");
-            let results = await collection.find({})
-                  //.limit(50)
-                  .toArray();
+            let results = await collection.aggregate([
+                  {
+                        $match: {
+                              "date":
+                              {
+                                    $gte: start,
+                                    $lte: end
+                              }
+                        }
+                  },
+                  {
+                        $sort: { "date": -1 }
+                  },
+            ]).toArray();
 
             res.send(results).status(200);
       }

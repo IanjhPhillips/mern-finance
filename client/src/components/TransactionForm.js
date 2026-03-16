@@ -12,7 +12,7 @@ import Select from '@mui/material/Select';
 import range from '../utils/Range';
 import { date, years, months, getMonthLength} from '../utils/DateUtils';
 
-function TransactionForm({ transactions, setTransactions }) {
+function TransactionForm({ setYearFilter, setMonthFilter, transactions, setTransactions }) {
 
     
 
@@ -75,7 +75,9 @@ function TransactionForm({ transactions, setTransactions }) {
                 if (response.status === 200) {
                     console.log("response:");
                     console.log(response.data);
-                    setTransactions([...transactions, response.data]);
+                    setYearFilter(year);
+                    setMonthFilter(month);
+                    //setTransactions([...transactions, response.data]);
                 }
             })
             .catch((error) => {
