@@ -10,11 +10,11 @@ import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import range from '../utils/Range';
-import { date, years, months, getMonthLength} from '../utils/DateUtils';
+import { date, years, months, getMonthLength } from '../utils/DateUtils';
 
 function TransactionForm({ yearFilter, setYearFilter, monthFilter, setMonthFilter, refreshTable }) {
 
-    
+
 
     const emptyTransaction = {
         "category": "",
@@ -30,8 +30,9 @@ function TransactionForm({ yearFilter, setYearFilter, monthFilter, setMonthFilte
     const [month, setMonth] = useState(months[date.getMonth()]);
     const [day, setDay] = useState(date.getDay());
     const [days, setDays] = useState(range(1, getMonthLength(month, year)));
+    const [amountIsError, setAmountIsError] = useState(false);
 
-    function validateMonth (m, y) {
+    function validateMonth(m, y) {
         let monthLength = getMonthLength(m, y);
 
         if (day > monthLength) {
@@ -59,15 +60,39 @@ function TransactionForm({ yearFilter, setYearFilter, monthFilter, setMonthFilte
         setDay(e.target.value);
     }
 
+    const handleAmount = (event) => {
+
+        console.log("handle amount");
+        const userValue = event.target.value;
+        const parseValue = parseFloat(userValue);
+
+        if (isNaN(parseValue)) {
+            console.log(`amount value invalid: ${userValue}`);
+            setAmountIsError(true);
+            setAmount(userValue);
+        }
+        else {
+            console.log(`valid numerical value: ${parseValue}`);
+            setAmountIsError(false);
+            setAmount(userValue);
+        }
+
+    }
+
     const handleSubmit = async () => {
 
+        if (amountIsError) {
+            return;
+        }
+
         let date = new Date(year, months.indexOf(month), day, 0, 0, 0, 0);
+        let parseAmount = parseFloat(amount);
         console.log(date);
         // post
         axios.post('http://localhost:8081/transaction', {
             category: category,
             description: description,
-            amount: amount,
+            amount: parseAmount,
             date: date
         })
             .then((response) => {
@@ -100,7 +125,7 @@ function TransactionForm({ yearFilter, setYearFilter, monthFilter, setMonthFilte
 
 
         // cleanup
-        setCategory(emptyTransaction.category);
+        // setCategory(emptyTransaction.category);
         setAmount(emptyTransaction.amount);
         setDescription(emptyTransaction.description);
     }
@@ -136,18 +161,24 @@ function TransactionForm({ yearFilter, setYearFilter, monthFilter, setMonthFilte
                             setDescription(event.target.value);
                         }}
                     />
-                    <FormControl sx={{ m: 1, width: '30ch' }}>
+                    <TextField
+                        sx={{ m: 1, width: '30ch' }}
+                        error={amountIsError}
+                        id="amount-field"
+                        label="Amount"
+                        value={amount}
+                        onChange={handleAmount}
+                    />
+                    {/* <FormControl sx={{ m: 1, width: '30ch' }}>
                         <InputLabel htmlFor="amount-field">Amount</InputLabel>
                         <OutlinedInput
                             id="amount-field"
                             startAdornment={<InputAdornment position="start">$</InputAdornment>}
                             label="Amount"
                             value={amount}
-                            onChange={(event) => {
-                                setAmount(event.target.value);
-                            }}
+                            onChange={handleAmount}
                         />
-                    </FormControl>
+                    </FormControl> */}
                     <FormControl sx={{ m: 1, width: '25ch' }}>
                         <InputLabel id={"year-label"}>Year</InputLabel>
                         <Select
