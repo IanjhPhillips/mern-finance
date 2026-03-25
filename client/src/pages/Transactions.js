@@ -73,7 +73,7 @@ function Transactions() {
   }, [year, month]);
 
   if (loading) {
-    return <p>Loading data...</p>;
+    return;
   }
 
   if (error) {
