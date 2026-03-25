@@ -81,7 +81,66 @@ function Statistics() {
 
 
     return (
-        <h1>Statistics</h1>
+        <div>
+
+            <TableContainer component={Paper} sx={{ minWidth: 150, maxWidth: 500 }} >
+                <div>
+                    <FormControl sx={{ m: 1, width: '25ch' }}>
+                        <InputLabel id={"year-label"}>Year Filter</InputLabel>
+                        <Select
+                            labelId="year-label"
+                            id="year"
+                            value={year}
+                            label="Year Filter"
+                            onChange={handleYear}
+                        >
+                            {years.map((y) => (
+                                <MenuItem
+                                    key={y}
+                                    value={y}>{y}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    <FormControl sx={{ m: 1, width: '25ch' }}>
+                        <InputLabel id={"month-label"}>Month Filter</InputLabel>
+                        <Select
+                            labelId="month-label"
+                            id="month"
+                            value={month}
+                            label="Month Filter"
+                            onChange={handleMonth}
+                        >
+                            {months.map((y) => (
+                                <MenuItem
+                                    key={y}
+                                    value={y}>{y}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </div>
+                <Table aria-label="simple table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Category</TableCell>
+                            <TableCell align="right">Total</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {stats.map((item) => (
+                            <TableRow
+                                key={item._id}
+                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >
+                                <TableCell component="th" scope="row">
+                                    {(item._id) ? (item._id) : "Uncategorized"}
+                                </TableCell>
+                                <TableCell align="right">{item.total}</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </div>
     )
 }
 
