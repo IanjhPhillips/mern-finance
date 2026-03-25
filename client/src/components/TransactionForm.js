@@ -12,7 +12,7 @@ import Select from '@mui/material/Select';
 import range from '../utils/Range';
 import { date, years, months, getMonthLength} from '../utils/DateUtils';
 
-function TransactionForm({ setYearFilter, setMonthFilter, transactions, setTransactions }) {
+function TransactionForm({ yearFilter, setYearFilter, monthFilter, setMonthFilter, refreshTable }) {
 
     
 
@@ -75,9 +75,23 @@ function TransactionForm({ setYearFilter, setMonthFilter, transactions, setTrans
                 if (response.status === 200) {
                     console.log("response:");
                     console.log(response.data);
-                    setYearFilter(year);
-                    setMonthFilter(month);
-                    //setTransactions([...transactions, response.data]);
+
+                    let stateChanged = false;
+
+                    if (year != yearFilter) {
+                        setYearFilter(year);
+                        stateChanged = true;
+                    }
+
+                    if (month != monthFilter) {
+                        setMonthFilter(month);
+                        stateChanged = true;
+                    }
+
+                    if (!stateChanged) {
+                        console.log("Form calling refresh table callback!");
+                        refreshTable();
+                    }
                 }
             })
             .catch((error) => {

@@ -40,7 +40,7 @@ function Transactions() {
   }
 
   const getTransactions = () => {
-    console.log("get")
+    console.log("get transactions called")
 
     let monthIndex = months.indexOf(month);
     let monthLength = getMonthLength(month, year);
@@ -82,7 +82,7 @@ function Transactions() {
 
   return (
     <div>
-      <TransactionForm setYearFilter={setYear} setMonthFilter={setMonth} transactions={transactions} setTransactions={setTransactions}></TransactionForm>
+      <TransactionForm yearFilter={year} setYearFilter={setYear} monthFilter={month} setMonthFilter={setMonth} transactions={transactions} setTransactions={setTransactions} refreshTable={getTransactions}></TransactionForm>
       
       <TableContainer component={Paper}>
         {/* <Box sx={{ display: 'flex', flexWrap: 'wrap', margin: 2 }}>
