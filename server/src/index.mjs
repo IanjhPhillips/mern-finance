@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
-import api from "./routes/transactionRouter.mjs";
+import transactions from "./routes/transactionRouter.mjs";
+import statistics from "./routes/statisticsRouter.mjs";
 
 const PORT = 8081;
 const app = express();
@@ -9,7 +10,8 @@ app.use(cors());
 app.use(express.json());
 
 // Load the /posts routes
-app.use("/transaction", api);
+app.use("/transaction", transactions);
+app.use("/statistics", statistics);
 
 // Global error handling
 app.use((err, _req, res, next) => {
