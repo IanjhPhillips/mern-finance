@@ -5,29 +5,29 @@ services:
     volumes:
       - mongodata:/data/db
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_ROOT_USERNAME: "${DB_UNAME}"
+      MONGO_INITDB_ROOT_PASSWORD: "${DB_PWD}"
 
   server:
-    image: node:20-alpine
+    image: "node:${NODE_IMAGE}"
     volumes:
       - ./server:/usr/src/app
     working_dir: /usr/src/app
     ports:
       - 8081:8081
-    environment:
-      NODE_ENV: development
+    env_file:
+      - ./.env
     command: sh -c "npm install && npm run start"
 
   client:
-    image: node:20-alpine
+    image: "node:${NODE_IMAGE}"
     volumes:
       - ./client:/usr/src/app
     working_dir: /usr/src/app
     ports:
       - 3000:3000
     environment:
-      NODE_ENV: development
+      NODE_ENV: "${NODE_ENV}"
     command: sh -c "npm install && npm run start"
 
 volumes:
