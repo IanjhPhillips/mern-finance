@@ -5,6 +5,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import categories from '../utils/Categories';
 
 //transaction: object with ._id
 export default function DBTransactionCategorySelect({ transaction }) {
@@ -39,13 +40,11 @@ export default function DBTransactionCategorySelect({ transaction }) {
           label="Category"
           onChange={patch}
         >
-          <MenuItem value={"Bills"}>Bills</MenuItem>
-          <MenuItem value={"Groceries"}>Groceries</MenuItem>
-          <MenuItem value={"Home Supplies"}>Home Supplies</MenuItem>
-          <MenuItem value={"Entertainment"}>Entertainment</MenuItem>
-          <MenuItem value={"Other"}>Other</MenuItem>
-        </Select>
-      </FormControl>
-    </Box>
+          {categories.map((item) => (
+            <MenuItem key={item.key} value={item.value}>{item.value}</MenuItem>
+          ))}
+      </Select>
+    </FormControl>
+    </Box >
   );
 }

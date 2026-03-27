@@ -11,6 +11,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import range from '../utils/Range';
 import { date, years, months, getMonthLength } from '../utils/DateUtils';
+import categories from '../utils/Categories';
 
 function TransactionForm({ yearFilter, setYearFilter, monthFilter, setMonthFilter, refreshTable }) {
 
@@ -145,11 +146,9 @@ function TransactionForm({ yearFilter, setYearFilter, monthFilter, setMonthFilte
                                 setCategory(event.target.value);
                             }}
                         >
-                            <MenuItem value={"Bills"}>Bills</MenuItem>
-                            <MenuItem value={"Groceries"}>Groceries</MenuItem>
-                            <MenuItem value={"Home Supplies"}>Home Supplies</MenuItem>
-                            <MenuItem value={"Entertainment"}>Entertainment</MenuItem>
-                            <MenuItem value={"Other"}>Other</MenuItem>
+                            {categories.map((item) => (
+                                <MenuItem key={item.key} value={item.value}>{item.value}</MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
                     <TextField
