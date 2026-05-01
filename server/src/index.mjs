@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import transactions from "./routes/transactionRouter.mjs";
 import statistics from "./routes/statisticsRouter.mjs";
+import imports from "./routes/importsRouter.mjs"
 
 const PORT = 8081;
 const app = express();
@@ -12,6 +13,7 @@ app.use(express.json());
 // Load the /posts routes
 app.use("/transaction", transactions);
 app.use("/statistics", statistics);
+app.use("/import", imports);
 
 // Global error handling
 app.use((err, _req, res, next) => {

@@ -1,6 +1,7 @@
 import { styled } from '@mui/material/styles';
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -8,11 +9,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import TransactionRow from '../components/TransactionRow';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
 import Button from '@mui/material/Button';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import ImportHeaderKeySelect from '../components/ImportHeaderKeySelect';
@@ -84,36 +80,46 @@ export default function InputFileUpload() {
 
     let handleSubmit = () => {
         const results = jsonTransactions.map(t => {
+
+            const userValue = t[amountKey];
+            const parseValue = parseFloat(userValue);
+
             return {
-                "description": t[descKey],
-                "date": new Date(t[dateKey]),
-                "amount": t[amountKey]
+                description: t[descKey],
+                date: new Date(t[dateKey]),
+                amount: parseValue
             };
         });
 
+        axios.post('http://localhost:8081/import', {
+            data: results
+        }).catch((error) => {
+            console.log(error)
+        });
+
         console.log("import submit!");
-        console.log(results);
+        //console.log(results);
         navigate("/transactions");
 
-        // axios.post('http://localhost:8081/transaction', {
-        //     category: category,
-        //     description: description,
-        //     amount: parseAmount,
-        //     date: date
-        // })
+
     }
 
     let canSubmit = () => {
         const allAssigned = amountKey != "" && dateKey != "" && descKey != "";
         let validDate = false;
+        let validAmount = false;
         if (!!jsonTransactions) {
             validDate = !isNaN(Date.parse(jsonTransactions[0][dateKey]))
+            const userValue = jsonTransactions[0][amountKey];
+            const parseValue = parseFloat(userValue);
+            validAmount = !isNaN(parseValue);
         }
+
         return allAssigned && validDate;
     }
 
     let noKeysSelected = () => {
-        return amountKey == "" && dateKey == "" && descKey == ""; 
+        return amountKey == "" && dateKey == "" && descKey == "";
     }
 
     console.log("rendering import page...");
