@@ -1,5 +1,6 @@
 import { styled } from '@mui/material/styles';
 import { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -15,6 +16,7 @@ import Select from '@mui/material/Select';
 import Button from '@mui/material/Button';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import ImportHeaderKeySelect from '../components/ImportHeaderKeySelect';
+import { date } from '../utils/DateUtils';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -30,9 +32,11 @@ const VisuallyHiddenInput = styled('input')({
 
 export default function InputFileUpload() {
 
+    const navigate = useNavigate();
+
     const [jsonTransactions, setJsonTransactions] = useState(null);
     const [jsonString, setJsonString] = useState("");
-    const [userHeaders, setUserHeaders] = useState([]);
+    const [userHeaders, setUserHeaders] = useState([""]);
     const [descKey, setDescKey] = useState("");
     const [dateKey, setDateKey] = useState("");
     const [amountKey, setAmountKey] = useState("")
@@ -58,16 +62,66 @@ export default function InputFileUpload() {
         reader.onload = (e) => {
             const csvContent = e.target.result;
             const [headers, jsonResult] = csvToJson(csvContent);
-            //setJsonTransactions(jsonResult);
+
+            console.log(`user headers: ${headers}`);
+            console.log(`json result:\n${JSON.stringify(jsonResult)}`);
+
+            setUserHeaders(headers);
+            setJsonTransactions(jsonResult);
 
             setJsonString(JSON.stringify(jsonResult, null, 2))
         };
         reader.readAsText(file);
     }
 
+    let handleClear = () => {
+        setAmountKey("");
+        setDateKey("");
+        setDescKey("");
+        setUserHeaders([""]);
+        setJsonString("");
+    }
+
+    let handleSubmit = () => {
+        const results = jsonTransactions.map(t => {
+            return {
+                "description": t[descKey],
+                "date": new Date(t[dateKey]),
+                "amount": t[amountKey]
+            };
+        });
+
+        console.log("import submit!");
+        console.log(results);
+        navigate("/transactions");
+
+        // axios.post('http://localhost:8081/transaction', {
+        //     category: category,
+        //     description: description,
+        //     amount: parseAmount,
+        //     date: date
+        // })
+    }
+
+    let canSubmit = () => {
+        const allAssigned = amountKey != "" && dateKey != "" && descKey != "";
+        let validDate = false;
+        if (!!jsonTransactions) {
+            validDate = !isNaN(Date.parse(jsonTransactions[0][dateKey]))
+        }
+        return allAssigned && validDate;
+    }
+
+    let noKeysSelected = () => {
+        return amountKey == "" && dateKey == "" && descKey == ""; 
+    }
+
+    console.log("rendering import page...");
+
     return (
         <div>
             <Button
+                sx={{ m: 1 }}
                 component="label"
                 role={undefined}
                 variant="contained"
@@ -82,26 +136,48 @@ export default function InputFileUpload() {
                     multiple
                 />
             </Button>
+            <Button
+                sx={{ m: 1 }}
+                variant="outlined"
+                onClick={handleClear}>Clear</Button>
+            <Button
+                sx={{ m: 1 }}
+                variant="contained"
+                color="success"
+                onClick={handleSubmit}
+                disabled={!canSubmit()}>
+                Submit
+            </Button>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            <TableCell>Description key</TableCell>
-                            <TableCell align="right">Date key</TableCell>
-                            <TableCell align="right">Amount setDateKey</TableCell>
-                            <TableCell align="right"></TableCell>
+                            <TableCell>Description</TableCell>
+                            <TableCell>Date</TableCell>
+                            <TableCell>Amount</TableCell>
+                            <TableCell></TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell component="th" scope="row">
-                                <ImportHeaderKeySelect setKey={setDescKey} headers={userHeaders}></ImportHeaderKeySelect>
+                                <ImportHeaderKeySelect setKey={setDescKey} headers={userHeaders} value={descKey}></ImportHeaderKeySelect>
                             </TableCell>
-                            <TableCell align="right">Date key</TableCell>
-                            <TableCell align="right">Amount setDateKey</TableCell>
-                            <TableCell align="right"></TableCell>
+                            <TableCell>
+                                <ImportHeaderKeySelect setKey={setDateKey} headers={userHeaders} value={dateKey}></ImportHeaderKeySelect>
+                            </TableCell>
+                            <TableCell>
+                                <ImportHeaderKeySelect setKey={setAmountKey} headers={userHeaders} value={amountKey}></ImportHeaderKeySelect>
+                            </TableCell>
+                            <TableCell></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-
+                        {!jsonTransactions || noKeysSelected() ? (<TableRow />) : jsonTransactions.map((transaction, i) => (
+                            <TableRow key={i}>
+                                <TableCell>{transaction[descKey]}</TableCell>
+                                <TableCell>{transaction[dateKey]}</TableCell>
+                                <TableCell>{transaction[amountKey]}</TableCell>
+                            </TableRow>
+                        ))}
                     </TableBody>
                 </Table>
             </TableContainer>

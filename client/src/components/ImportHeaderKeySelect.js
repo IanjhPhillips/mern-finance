@@ -8,19 +8,18 @@ import Select from '@mui/material/Select';
 import categories from '../utils/Categories';
 
 //transaction: object with ._id
-export default function ImportHeaderKeySelect({ setKey, headers }) {
+export default function ImportHeaderKeySelect({ setKey, headers, value }) {
 
-
-    const [ value, setValue ] = React.useState("");
 
     let handleChange = (event) => {
         setKey(event.target.value);
     }
 
+    console.log("rendering hydrated key select");
     return (
         <Box sx={{ minWidth: 120 }}>
             <FormControl fullWidth>
-                <InputLabel id={"key-label"}>Category</InputLabel>
+                <InputLabel id={"key-label"}>Key</InputLabel>
                 <Select
                     labelId="key-label"
                     id="key"
@@ -29,8 +28,27 @@ export default function ImportHeaderKeySelect({ setKey, headers }) {
                     onChange={handleChange}
                 >
                     {headers.map((item) => (
-                        <MenuItem key={item.key} value={item.value}>{item.value}</MenuItem>
+                        <MenuItem key={item} value={item}>{item}</MenuItem>
                     ))}
+                </Select>
+            </FormControl>
+        </Box >
+    );
+
+
+    console.log("rendering dry key select");
+    return (
+        <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth>
+                <InputLabel id={"key-label"}>Key</InputLabel>
+                <Select
+                    labelId="key-label"
+                    id="key"
+                    value={value}
+                    label="Key"
+                    disabled
+                    onChange={handleChange}
+                >
                 </Select>
             </FormControl>
         </Box >

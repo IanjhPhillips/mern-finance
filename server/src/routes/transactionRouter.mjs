@@ -123,16 +123,4 @@ router.post("/", async (req, res) => {
       }
 });
 
-// router.get('/', async (req, res) => {
-//       //transactions=[{id:1,name:'Income',amount:500},{id:2,name:'Coffee', amount:5}, {id:3, name:'E-transfer', amount: 17.5}];
-//       res.json(transactions);
-// });
-
-// router.post('/', async (req, res) => {
-//       transactions.push(...[{id:1,name:'Income',amount:500},{id:2,name:'Coffee', amount:5}, {id:3, name:'E-transfer', amount: 17.5}])
-//       res.redirect('/transaction');
-// });
-
-//router.get('/transaction', transactionController.get);
-//router.post('/transaction', transactionController.post);
 export default router;
